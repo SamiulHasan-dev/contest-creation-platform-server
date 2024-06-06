@@ -61,8 +61,17 @@ async function run() {
       res.send(result);
     })
 
+    app.get('/contest/:id', async(req, res)=>{
+      const id = req.params.id;
+      const query = { _id : new ObjectId(id) }
+      const result = await contestCollection.findOne(query);
+      res.send(result);
+    })
+
+    
+
     app.get('/contests/:email', async (req, res) => {
-      console.log(req.params.email)
+      // console.log(req.params.email)
       const myEmail = req.params.email;
       const query = { email: myEmail };
       console.log(myEmail)
