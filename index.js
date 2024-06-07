@@ -84,13 +84,13 @@ async function run() {
       res.send(result);
     })
 
-    app.get('/users', verifyToken,verifyAdmin, async (req, res) => {
+    app.get('/users', verifyToken, async (req, res) => {
       // console.log(req.headers);
       const result = await userCollection.find().toArray();
       res.send(result);
     })
 
-
+    // admin related api
     app.get('/users/admin/:email', verifyToken, async (req, res) => {
       const email = req.params.email;
       if (email !== req.decoded.email) {
@@ -112,6 +112,34 @@ async function run() {
       const updatedDoc = {
         $set: {
           role: 'admin'
+        }
+      }
+      const result = await userCollection.updateOne(filter, updatedDoc);
+      res.send(result)
+    })
+
+    //creator related api
+    app.get('/users/creator/:email', verifyToken, async (req, res) => {
+      const email = req.params.email;
+      if (email !== req.decoded.email) {
+        return res.status(403).send({ message: 'forbidden access' })
+      }
+      const query = { email: email }
+      const user = await userCollection.findOne(query);
+      let creator = false;
+      if (user) {
+        creator = user?.role === 'creator';
+      }
+      res.send({ creator })
+    })
+
+
+    app.patch('/users/creator/:id',verifyToken,verifyAdmin, async (req, res) => {
+      const id = req.params.id;
+      const filter = { _id: new ObjectId(id) }
+      const updatedDoc = {
+        $set: {
+          role: 'creator'
         }
       }
       const result = await userCollection.updateOne(filter, updatedDoc);
