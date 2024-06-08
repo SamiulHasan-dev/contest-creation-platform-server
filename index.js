@@ -179,7 +179,21 @@ async function run() {
           taskInstruction: item.taskInstruction,
           contestType: item.contestType,
           contestDescription: item.contestDescription,
-          contestDeadLine: item.contestDeadLine
+          contestDeadLine: item.contestDeadLine,
+          adminComment: item.adminComment
+        }
+      }
+      const result = await contestCollection.updateOne(filter, updatedDoc);
+      res.send(result);
+    })
+
+    app.patch('/adminComment/:id', async (req, res) => {
+      const item = req.body;
+      const id = req.params.id;
+      const filter = { _id: new ObjectId(id) }
+      const updatedDoc = {
+        $set: {
+          adminComment: item.adminComment
         }
       }
       const result = await contestCollection.updateOne(filter, updatedDoc);
