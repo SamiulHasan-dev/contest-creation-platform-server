@@ -199,6 +199,20 @@ async function run() {
       const result = await contestCollection.updateOne(filter, updatedDoc);
       res.send(result);
     })
+
+
+    app.patch('/status/:id', async (req, res) => {
+      const item = req.body;
+      const id = req.params.id;
+      const filter = { _id: new ObjectId(id) }
+      const updatedDoc = {
+        $set: {
+          status: item.status
+        }
+      }
+      const result = await contestCollection.updateOne(filter, updatedDoc);
+      res.send(result);
+    })
     
 
     app.get('/contests/:email', async (req, res) => {
