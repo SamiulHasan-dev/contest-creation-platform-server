@@ -90,6 +90,30 @@ async function run() {
       res.send(result);
     })
 
+    app.get('/usersUser/:email', async (req, res) => {
+      const myEmail = req.params.email;
+      const query = { email: myEmail };
+      const result = await userCollection.findOne(query);
+      console.log("user email result", result);
+      res.send(result);
+    })
+
+    app.patch('/usersUser/:email', async (req, res) => {
+      const item = req.body;
+      const myEmail = req.params.email;
+      const filter = { email: myEmail };
+      const updatedDoc = {
+        $set: {
+          name: item.name,
+          photo: item.photo,
+          address: item.address
+        }
+      }
+      const result = await userCollection.updateOne(filter, updatedDoc);
+      res.send(result);
+      
+    })
+
     // admin related api
     app.get('/users/admin/:email', verifyToken, async (req, res) => {
       const email = req.params.email;
@@ -159,6 +183,7 @@ async function run() {
       res.send(result);
     })
 
+  
     app.get('/contest/:id', async(req, res)=>{
       const id = req.params.id;
       const query = { _id : new ObjectId(id) }
