@@ -321,6 +321,7 @@ async function run() {
       res.send(result);
     })
 
+    //to get contest participate
     app.get('/payments/:email', async(req, res)=>{
       const myEmail = req.params.email;
       const query = { contestParticipateMail: myEmail };
@@ -328,6 +329,27 @@ async function run() {
       const result = await paymentCollection.find(query).toArray();
       res.send(result);
     })
+
+    //to get creator's contest participate
+    app.get('/paymentsCreator/:email', async(req, res)=>{
+      const myEmail = req.params.email;
+      const query = { contestCreatorMail: myEmail };
+      console.log(myEmail)
+      const result = await paymentCollection.find(query).toArray();
+      res.send(result);
+    })
+
+
+
+    //to get show submission 
+    app.get('/paymentSubmit/:contestId', async(req, res)=>{
+      const item = req.params.contestId;
+      const query = { contestId: item };
+      const result = await paymentCollection.find(query).toArray();
+      res.send(result);
+    })
+
+    
 
    app.get('/paymentSingle/:id', async(req, res)=>{
       const id = req.params.id;
@@ -343,6 +365,20 @@ async function run() {
       const updatedDoc = {
         $set: {
           link: item.link
+        }
+      }
+      const result = await paymentCollection.updateOne(filter, updatedDoc);
+      res.send(result);
+    })
+
+    // make winner
+    app.patch('/paymentsWinner/:id', async (req, res) => {
+      const item = req.body;
+      const id = req.params.id;
+      const filter = { _id: new ObjectId(id) }
+      const updatedDoc = {
+        $set: {
+          winner: item.winner
         }
       }
       const result = await paymentCollection.updateOne(filter, updatedDoc);
