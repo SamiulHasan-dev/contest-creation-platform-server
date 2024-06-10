@@ -92,6 +92,13 @@ async function run() {
       res.send(result);
     })
 
+    app.delete('/usersDelete/:id', async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) }
+      const result = await userCollection.deleteOne(query);
+      res.send(result);
+    })
+
     app.get('/usersUser/:email', async (req, res) => {
       const myEmail = req.params.email;
       const query = { email: myEmail };
@@ -184,6 +191,19 @@ async function run() {
       const result = await contestCollection.find().toArray();
       res.send(result);
     })
+
+
+    app.get('/contestsHome', async (req, res) => {
+      // const id = req.body();
+      const query = req.body;
+      const options = {
+          // Sort returned documents in ascending order by title (A->Z)
+          sort: { currentTime: -1 },
+      };
+      const cursor = contestCollection.find(query, options);
+      const result = await cursor.toArray();
+      res.send(result);
+  })
 
   
     app.get('/contest/:id', async(req, res)=>{
@@ -294,6 +314,39 @@ async function run() {
       const paymentResult = await paymentCollection.insertOne(payment);
       console.log('payment info', payment);
       res.send(paymentResult);
+    })
+
+    app.get('/payments', async(req, res)=>{
+      const result = await paymentCollection.find().toArray();
+      res.send(result);
+    })
+
+    app.get('/payments/:email', async(req, res)=>{
+      const myEmail = req.params.email;
+      const query = { contestParticipateMail: myEmail };
+      console.log(myEmail)
+      const result = await paymentCollection.find(query).toArray();
+      res.send(result);
+    })
+
+   app.get('/paymentSingle/:id', async(req, res)=>{
+      const id = req.params.id;
+      const query = { _id : new ObjectId(id) }
+      const result = await paymentCollection.findOne(query);
+      res.send(result);
+    })
+
+    app.patch('/paymentsSubmit/:id', async (req, res) => {
+      const item = req.body;
+      const id = req.params.id;
+      const filter = { _id: new ObjectId(id) }
+      const updatedDoc = {
+        $set: {
+          link: item.link
+        }
+      }
+      const result = await paymentCollection.updateOne(filter, updatedDoc);
+      res.send(result);
     })
 
 
